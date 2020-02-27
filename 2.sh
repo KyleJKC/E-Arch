@@ -18,7 +18,7 @@ arch_chroot() {
 #最小安装
 install_baseSystem(){
 	print_title "install_baseSystem"
-        pacstrap /mnt base linux linux-firmware dhcpcd vim neovim wifi-menu wqy-zenhei ttf-dejavu wqy-microhei adobe-source-code-pro-fonts
+        pacstrap /mnt base linux linux-firmware dhcpcd vim neovim
 }
 
 #生成标卷文件表
