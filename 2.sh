@@ -46,8 +46,8 @@ configrue_drive(){
 	arch_chroot "pacman -S --noconfirm bumblebee -y"
         arch_chroot "systemctl enable bumblebeed"
         arch_chroot "pacman -S --noconfirm nvidia-dkms nvidia-utils nvidia-settings xf86-input-synaptics -y"        
-        #arch_chroot "intel-ucode -y"
-        arch_chroot "amd-ucode -y"
+        #arch_chroot "pacman -S --noconfirm intel-ucode -y"
+        arch_chroot "pacman -S --noconfirm amd-ucode -y"
 }
 
 #安装网络管理程序
@@ -60,10 +60,11 @@ configrue_networkmanager(){
 #安装配置引导程序（efi引导的话，将grub改成grub-efi-x86_64 efibootmgr）
 configrue_bootloader(){
        print_title "configrue_bootloader"
-       arch_chroot "pacman -S --noconfirm grub efibootmgr -y"
+       arch_chroot "pacman -S --noconfirm grub efibootmgr os-prober -y"
+       arch_chroot "mkdir /boot/EFI/grub"
        #arch_chroot "grub-install --target=i386-pc /dev/sda" #MBR+BIOS启动
-       arch_chroot "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=boot" #GPT+UEFI启动
-       arch_chroot "grub-mkconfig -o /boot/grub/grub.cfg" 
+       arch_chroot "grub-mkconfig > /boot/EFI/grub/grub.cfg"
+       arch_chroot "grub-install --target=x86_64-efi --efi-directory=/boot/EFI" #GPT+UEFI启动
 }
 
 
@@ -91,7 +92,6 @@ configure_username(){
         arch_chroot "passwd $User"
         arch_chroot "sed -i 's/\# \%wheel ALL=(ALL) ALL/\%wheel ALL=(ALL) ALL/g' /etc/sudoers"
 	arch_chroot "sed -i 's/\# \%wheel ALL=(ALL) NOPASSWD: ALL/\%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers"
-        umount -R /mnt
 	clear
 	print_title "install has been done! please reboot."
 }
