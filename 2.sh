@@ -61,10 +61,10 @@ configrue_networkmanager(){
 configrue_bootloader(){
        print_title "configrue_bootloader"
        arch_chroot "pacman -S --noconfirm grub efibootmgr os-prober -y"
-       arch_chroot "mkdir /boot/EFI/grub"
+       arch_chroot "mkdir /boot/grub"
+       arch_chroot "grub-mkconfig > /boot/grub/grub.cfg"
+       arch_chroot "grub-install --target=x86_64-efi --efi-directory=/boot" #GPT+UEFI启动
        #arch_chroot "grub-install --target=i386-pc /dev/sda" #MBR+BIOS启动
-       arch_chroot "grub-mkconfig > /boot/EFI/grub/grub.cfg"
-       arch_chroot "grub-install --target=x86_64-efi --efi-directory=/boot/EFI" #GPT+UEFI启动
 }
 
 
@@ -92,6 +92,7 @@ configure_username(){
         arch_chroot "passwd $User"
         arch_chroot "sed -i 's/\# \%wheel ALL=(ALL) ALL/\%wheel ALL=(ALL) ALL/g' /etc/sudoers"
 	arch_chroot "sed -i 's/\# \%wheel ALL=(ALL) NOPASSWD: ALL/\%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers"
+        umount -R /mnt	
 	clear
 	print_title "install has been done! please reboot."
 }
